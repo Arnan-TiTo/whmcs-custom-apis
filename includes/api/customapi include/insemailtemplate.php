@@ -8,35 +8,69 @@ if (!defined("WHMCS")) {
 
 function get_env($vars)
 {
-    $array = array('id' => array(), 'name' => array());
+    $array = array(
+     'type'       => array(),
+     'name'     => array(),
+     'subject'     => array(),
+     'message'     => array(),
+     'fromemail'     => array(),
+     'fromname'     => array(),
+     'language'     => array(),
+     'icopytod'     => array(),
+     'blind_copy'     => array(),
+     'attachments'     => array(),
+     'plaintext'     => array(),
+     'disabled'     => array()
+
+    );
+    
     //Post CURL
-    $array['id'] = $vars['id'];
-    $array['name'] = $vars['name'];
+    $array['type']        = $vars['type'] ?? 'general';
+    $array['name']        = $vars['name'] ?? null;
+    $array['subject']     = $vars['subject'] ?? null;
+    $array['message']     = $vars['message'] ?? null;
+    $array['fromemail']   = $vars['fromemail'] ?? '';
+    $array['fromname']    = $vars['fromname'] ?? '';
+    $array['language']    = $vars['language'] ?? '';
+    $array['icopytod']     = $vars['copyto'] ?? '';
+    $array['blind_copy']  = $vars['blind_copy_to'] ?? '';
+    $array['attachments'] = $vars['attachments'] ?? '';
+    $array['plaintext']   = isset($vars['plaintext']) ? (int)$vars['plaintext'] : 0;
+    $array['disabled']    = isset($vars['disabled']) ? (int)$vars['disabled'] : 0;    
 
     return (object) $array;
 }
+
 
 try {
 
     $post_fields = get_env(get_defined_vars());
 
-    $query = Capsule::table('tblproductgroups');
-
-    if (isset($post_fields->id))
-    $query->where('id', $post_fields->id);   
-    
-    if (isset($post_fields->name))
-    $query->where('name', $post_fields->name);   
-
-    $results = $query->get();
-
-    if (empty($results)) {
-        throw new Exception('No data found');
+    if (empty($post_fields->name)||empty($post_fields->subject)||empty($post_fields->message)) {
+        return ["result" => "error", "message" => "Missing required fields (name, subject, message)"];
     }
 
-    $apiresults = array("result" => "success", "data" => $results);
+    $id = Capsule::table('tblemailtemplates')->insertGetId([
+        'type'          => $post_fields->type,
+        'name'          => $post_fields->name,
+        'subject'       => $post_fields->subject,
+        'message'       => $post_fields->message,
+        'attachments'   => $post_fields->attachments,
+        'fromemail'     => $post_fields->fromemail,
+        'fromname'      => $post_fields->fromname,
+        'disabled'      => $post_fields->disabled,
+        'custom'        => 1,
+        'language'      => $post_fields->language,
+        'copyto'        => $post_fields->icopytod,
+        'blind_copy_to' => $post_fields->blind_copy,
+        'plaintext'     => $post_fields->plaintext,
+    ]);
 
+    $apiresults = array("result" => "success", "id" => $id);
 
 } catch (Exception $e) {
     return ["result" => "error", "message" => $e->getMessage()];
 }
+
+
+?>

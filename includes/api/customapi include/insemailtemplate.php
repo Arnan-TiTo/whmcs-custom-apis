@@ -47,7 +47,7 @@ try {
     $post_fields = get_env(get_defined_vars());
 
     if (empty($post_fields->name)||empty($post_fields->subject)||empty($post_fields->message)) {
-        return ["result" => "error", "message" => "Missing required fields (name, subject, message)"];
+        $apiresults = array("result" => "error", "message" => "Missing required fields (name, subject, message)");
     }
 
     $id = Capsule::table('tblemailtemplates')->insertGetId([

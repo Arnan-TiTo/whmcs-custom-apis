@@ -13,6 +13,7 @@ function get_env($vars)
     $array['id'] = $vars['id'];
     $array['gid'] = $vars['gid'];
     $array['name'] = $vars['name'];
+    $array['pricing_id'] = $vars['pricing_id'];
 
     return (object) $array;
 }
@@ -31,6 +32,9 @@ try {
     
     if (isset($post_fields->name))
     $query->where('name', $post_fields->name);   
+
+    if (isset($post_fields->pricing_id))
+    $query->where('name', $post_fields->pricing_id);  
 
     $results = $query->get();
 

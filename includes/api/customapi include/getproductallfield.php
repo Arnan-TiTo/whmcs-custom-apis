@@ -22,7 +22,7 @@ try {
 
     $post_fields = get_env(get_defined_vars());
 
-    $query = Capsule::table('tblproducts');
+    $query = Capsule::table('vw_productpricing');
 
     if (isset($post_fields->id))
     $query->where('id', $post_fields->id);   

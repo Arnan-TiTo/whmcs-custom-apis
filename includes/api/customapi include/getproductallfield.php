@@ -34,7 +34,7 @@ try {
     $query->where('name', $post_fields->name);   
 
     if (isset($post_fields->pricing_id))
-    $query->where('name', $post_fields->pricing_id);  
+    $query->where('pricing_id', $post_fields->pricing_id);  
 
     $results = $query->get();
 

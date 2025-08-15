@@ -8,10 +8,10 @@ if (!defined("WHMCS")) {
 
 function get_env($vars)
 {
-    $array = array('whmcs_order_id' => array(), 'package_name' => array());
+    $array = array('whmcsOrderId' => array(), 'packageName' => array());
     //Post CURL
-    $array['whmcs_order_id'] = $vars['whmcs_order_id'];
-    $array['package_name'] = $vars['package_name'];
+    $array['whmcsOrderId'] = $vars['whmcsOrderId'];
+    $array['packageName'] = $vars['packageName'];
 
     return (object) $array;
 }
@@ -22,11 +22,11 @@ try {
 
     $query = Capsule::table('vw_order_detail');
 
-    if (isset($post_fields->whmcs_order_id))
-    $query->where('whmcs_order_id', $post_fields->whmcs_order_id);   
-    
-    if (isset($post_fields->package_name))
-    $query->where('package_name', $post_fields->package_name);   
+    if (isset($post_fields->whmcsOrderId))
+    $query->where('whmcs_order_id', $post_fields->whmcsOrderId);
+
+    if (isset($post_fields->packageName))
+    $query->where('package_name', $post_fields->packageName);
 
     $results = $query->get();
 

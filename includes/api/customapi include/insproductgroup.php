@@ -11,14 +11,14 @@ function get_product_group_env($vars)
     $array = array(
         'name'            => $vars['name'] ?? null,
         'slug'            => $vars['slug'] ?? null,
-        'headline'        => $vars['headline'] ?? '',
-        'tagline'         => $vars['tagline'] ?? '',
-        'orderfrmtpl'     => $vars['orderfrmtpl'] ?? '',
-        'disabledgateways'=> $vars['disabledgateways'] ?? '',
+        'headline'        => $vars['headLine'] ?? '',
+        'tagline'         => $vars['tagLine'] ?? '',
+        'orderfrmtpl'     => $vars['orderFrmTpl'] ?? '',
+        'disabledgateways'=> $vars['disabledGateways'] ?? '',
         'hidden'          => isset($vars['hidden']) ? (int)$vars['hidden'] : 0,
         'order'           => isset($vars['order']) ? (int)$vars['order'] : 0,
-        'created_at'      => $vars['created_at'] ?? date('Y-m-d H:i:s'),
-        'updated_at'      => $vars['updated_at'] ?? date('Y-m-d H:i:s'),
+        'createdAt'      => $vars['createdAt'] ?? date('Y-m-d H:i:s'),
+        'updatedAt'      => $vars['updatedAt'] ?? date('Y-m-d H:i:s'),
     );
 
     return (object) $array;
@@ -34,14 +34,14 @@ try {
     $id = Capsule::table('tblproductgroups')->insertGetId([
         'name'            => $post_fields->name,
         'slug'            => $post_fields->slug,
-        'headline'        => $post_fields->headline,
-        'tagline'         => $post_fields->tagline,
-        'orderfrmtpl'     => $post_fields->orderfrmtpl,
-        'disabledgateways'=> $post_fields->disabledgateways,
+        'headline'        => $post_fields->headLine,
+        'tagline'         => $post_fields->tagLine,
+        'orderfrmtpl'     => $post_fields->orderFrmTpl,
+        'disabledgateways'=> $post_fields->disabledGateways,
         'hidden'          => $post_fields->hidden,
         'order'           => $post_fields->order,
-        'created_at'      => $post_fields->created_at,
-        'updated_at'      => $post_fields->updated_at,
+        'createdAt'      => $post_fields->createdAt,
+        'updatedAt'      => $post_fields->updatedAt,
     ]);
 
     $apiresults = array(

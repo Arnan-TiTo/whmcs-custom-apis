@@ -8,7 +8,7 @@ if (!defined("WHMCS")) {
 
 function insert_env($vars)
 {
-    return (object) [
+    $array = [
         'type'         => $vars['type'] ?? 'product',
         'currency'     => $vars['currency'] ?? 1,
         'relid'        => $vars['relid'] ?? 0,
@@ -25,6 +25,9 @@ function insert_env($vars)
         'biennially'   => $vars['biennially'] ?? 0.00,
         'triennially'  => $vars['triennially'] ?? 0.00,
     ];
+    
+    return (object)$array;
+
 }
 
 try {

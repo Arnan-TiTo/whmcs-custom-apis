@@ -26,7 +26,7 @@ function update_env($vars)
     if (isset($vars['biennially'])) $fields['biennially'] = $vars['biennially'];
     if (isset($vars['triennially'])) $fields['triennially'] = $vars['triennially'];
 
-    return $fields;
+    return (object) $fields;
 }
 
 try {

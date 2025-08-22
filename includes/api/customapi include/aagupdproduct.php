@@ -66,7 +66,7 @@ function update_env($vars)
     // update timestamp
     $fields['updated_at'] = date('Y-m-d H:i:s');
 
-    return $fields;
+    return (object) $fields;
 }
 
 try {

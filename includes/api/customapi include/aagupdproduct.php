@@ -80,8 +80,12 @@ try {
         return;
     }
 
-    if (empty($update_fields)) {
-        $apiresults = ["result" => "error", "message" => "No fields provided to update"];
+    if (empty($post_fields->name) || 
+        empty($post_fields->type) || 
+        empty($post_fields->description) || 
+        empty($post_fields->welcomeEmail) || 
+        empty($post_fields->payType)) {
+        $apiresults = ["result" => "error", "message" => "Missing required fields (name, type, description, welcomeEmail, payType)"];
         return;
     }
 

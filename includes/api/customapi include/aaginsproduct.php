@@ -87,8 +87,12 @@ function insert_env($vars)
 try {
     $post_fields = insert_env(get_defined_vars());  
 
-    if (empty($post_fields->name) || empty($post_fields->type)) {
-        $apiresults = ["result" => "error", "message" => "Missing required fields (name, type)"];
+    if (empty($post_fields->name) || 
+        empty($post_fields->type) || 
+        empty($post_fields->description) || 
+        empty($post_fields->welcomeEmail) || 
+        empty($post_fields->payType)) {
+        $apiresults = ["result" => "error", "message" => "Missing required fields (name, type, description, welcomeEmail, payType)"];
         return;
     }
 

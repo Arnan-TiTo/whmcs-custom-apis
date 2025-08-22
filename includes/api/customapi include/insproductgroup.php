@@ -6,26 +6,26 @@ if (!defined("WHMCS")) {
     die("This file cannot be accessed directly!");
 }
 
-function get_product_group_env($vars)
+function insert_env($vars)
 {
     $array = array(
         'name'            => $vars['name'] ?? null,
         'slug'            => $vars['slug'] ?? null,
-        'headline'        => $vars['headLine'] ?? '',
-        'tagline'         => $vars['tagLine'] ?? '',
-        'orderfrmtpl'     => $vars['orderFrmTpl'] ?? '',
-        'disabledgateways'=> $vars['disabledGateways'] ?? '',
+        'headLine'        => $vars['headLine'] ?? '',
+        'tagLine'         => $vars['tagLine'] ?? '',
+        'orderFrmTpl'     => $vars['orderFrmTpl'] ?? '',
+        'disabledGateways'=> $vars['disabledGateways'] ?? '',
         'hidden'          => isset($vars['hidden']) ? (int)$vars['hidden'] : 0,
         'order'           => isset($vars['order']) ? (int)$vars['order'] : 0,
-        'createdAt'      => $vars['createdAt'] ?? date('Y-m-d H:i:s'),
-        'updatedAt'      => $vars['updatedAt'] ?? date('Y-m-d H:i:s'),
+        'created_At'      => $vars['created_At'] ?? date('Y-m-d H:i:s'),
+        'updated_At'      => $vars['updated_At'] ?? date('Y-m-d H:i:s'),
     );
 
     return (object) $array;
 }
 
 try {
-    $post_fields = get_product_group_env(get_defined_vars());
+    $post_fields = insert_env(get_defined_vars());
 
     if (empty($post_fields->name) || empty($post_fields->slug)) {
         $apiresults =  array("result" => "error", "message" => "Missing required fields (name, slug)");
@@ -40,8 +40,8 @@ try {
         'disabledgateways'=> $post_fields->disabledGateways,
         'hidden'          => $post_fields->hidden,
         'order'           => $post_fields->order,
-        'createdAt'      => $post_fields->createdAt,
-        'updatedAt'      => $post_fields->updatedAt,
+        'created_At'      => $post_fields->created_At,
+        'updated_At'      => $post_fields->updated_At,
     ]);
 
     $apiresults = array(

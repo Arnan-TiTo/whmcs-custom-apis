@@ -90,8 +90,8 @@ try {
     if (empty($post_fields->name) || 
         empty($post_fields->type) || 
         empty($post_fields->description) || 
-        empty($post_fields->welcomeEmail) || 
-        empty($post_fields->payType)) {
+        empty($post_fields->welcomeemail) || 
+        empty($post_fields->paytype)) {
         $apiresults = ["result" => "error", "message" => "Missing required fields (name, type, description, welcomeEmail, payType)"];
         return;
     }

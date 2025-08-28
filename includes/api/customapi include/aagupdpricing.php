@@ -30,12 +30,14 @@ function update_env($vars)
 }
 
 try {
+    $id = (isset($vars['id']) && is_numeric($vars['id'])) ? (int)$vars['id'] : @$_REQUEST['id'];
+
     $update_fields = update_env(get_defined_vars());
 
-    if (empty($update_fields->id) || !is_numeric($update_fields->id)) {
+    if (empty($id) || !is_numeric($id)) {
         $apiresults = array(
             "result" => "error",
-            "message" => "Missing or invalid 'id' " .$update_fields->id." parameter"
+            "message" => "Missing or invalid 'id' parameter"
         );
         return;
     }    
@@ -45,12 +47,12 @@ try {
         return;
     }
 
-    if (!is_numeric($update_fields->msetupfee) || !is_numeric($update_fields->qsetupfee) ||
-        !is_numeric($update_fields->ssetupfee) || !is_numeric($update_fields->asetupfee) ||
-        !is_numeric($update_fields->bsetupfee) || !is_numeric($update_fields->tsetupfee) ||
-        !is_numeric($update_fields->monthly) || !is_numeric($update_fields->quarterly) ||
+    if (!is_numeric($update_fields->msetupfee)    || !is_numeric($update_fields->qsetupfee) ||
+        !is_numeric($update_fields->ssetupfee)    || !is_numeric($update_fields->asetupfee) ||
+        !is_numeric($update_fields->bsetupfee)    || !is_numeric($update_fields->tsetupfee) ||
+        !is_numeric($update_fields->monthly)      || !is_numeric($update_fields->quarterly) ||
         !is_numeric($update_fields->semiannually) || !is_numeric($update_fields->annually) ||
-        !is_numeric($update_fields->biennially) || !is_numeric($update_fields->triennially)) {
+        !is_numeric($update_fields->biennially)   || !is_numeric($update_fields->triennially)) {
         $apiresults = ["result" => "error", "message" => "Invalid pricing values"];
         return;
     }
@@ -60,9 +62,6 @@ try {
         return;
     }
 
-    $id = $update_fields->id;
-    unset($update_fields['id']);
-    
     Capsule::table('tblpricing')
         ->where('id', $id)
         ->update((array)$update_fields);

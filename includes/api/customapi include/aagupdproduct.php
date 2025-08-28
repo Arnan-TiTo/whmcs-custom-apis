@@ -9,7 +9,6 @@ if (!defined("WHMCS")) {
 function update_env($vars)
 {
     $fields = [];
-    if (isset($vars['id'])) $fields['id'] = $vars['id'];
     if (isset($vars['type'])) $fields['type'] = $vars['type'];
     if (isset($vars['gid'])) $fields['gid'] = $vars['gid'];
     if (isset($vars['name'])) $fields['name'] = $vars['name'];
@@ -18,25 +17,42 @@ function update_env($vars)
     if (isset($vars['hidden'])) $fields['hidden'] = (int)$vars['hidden'];
     if (isset($vars['showDomainOptions'])) $fields['showdomainoptions'] = $vars['showDomainOptions'];
     if (isset($vars['welcomeEmail'])) $fields['welcomeemail'] = $vars['welcomeEmail'];
+    if (isset($vars['payType'])) $fields['paytype'] = $vars['payType'];
     if (isset($vars['stockControl'])) $fields['stockcontrol'] = $vars['stockControl'];
     if (isset($vars['qty'])) $fields['qty'] = $vars['qty'];
     if (isset($vars['prorataBilling'])) $fields['proratabilling'] = $vars['prorataBilling'];
     if (isset($vars['prorataDate'])) $fields['proratadate'] = $vars['prorataDate'];
     if (isset($vars['prorataChargeNextMonth'])) $fields['proratachargenextmonth'] = $vars['prorataChargeNextMonth'];
-    if (isset($vars['payType'])) $fields['paytype'] = $vars['payType'];
     if (isset($vars['allowQty'])) $fields['allowqty'] = $vars['allowQty'];
     if (isset($vars['subDomain'])) $fields['subdomain'] = $vars['subDomain'];
     if (isset($vars['autoSetup'])) $fields['autosetup'] = $vars['autoSetup'];
     if (isset($vars['serverType'])) $fields['servertype'] = $vars['serverType'];
     if (isset($vars['serverGroup'])) $fields['servergroup'] = $vars['serverGroup'];
 
-    // configOption1 - configOption24
-    for ($i = 1; $i <= 24; $i++) {
-        $configOption = "configOption$i";
-        if (isset($vars[$configOption])) {
-            $fields["configoption$i"] = $vars[$configOption];
-        }
-    }
+    if (isset($vars['configOption1'])) $fields['configoption1'] = $vars['configOption1'];
+    if (isset($vars['configOption2'])) $fields['configoption2'] = $vars['configOption2'];
+    if (isset($vars['configOption3'])) $fields['configoption3'] = $vars['configOption3'];
+    if (isset($vars['configOption4'])) $fields['configoption4'] = $vars['configOption4'];
+    if (isset($vars['configOption5'])) $fields['configoption5'] = $vars['configOption5'];
+    if (isset($vars['configOption6'])) $fields['configoption6'] = $vars['configOption6'];
+    if (isset($vars['configOption7'])) $fields['configoption7'] = $vars['configOption7'];
+    if (isset($vars['configOption8'])) $fields['configoption8'] = $vars['configOption8'];
+    if (isset($vars['configOption9'])) $fields['configoption9'] = $vars['configOption9'];
+    if (isset($vars['configOption10'])) $fields['configoption10'] = $vars['configOption10'];
+    if (isset($vars['configOption11'])) $fields['configoption11'] = $vars['configOption11'];
+    if (isset($vars['configOption12'])) $fields['configoption12'] = $vars['configOption12'];
+    if (isset($vars['configOption13'])) $fields['configoption13'] = $vars['configOption13'];
+    if (isset($vars['configOption14'])) $fields['configoption14'] = $vars['configOption14'];
+    if (isset($vars['configOption15'])) $fields['configoption15'] = $vars['configOption15'];
+    if (isset($vars['configOption16'])) $fields['configoption16'] = $vars['configOption16'];
+    if (isset($vars['configOption17'])) $fields['configoption17'] = $vars['configOption17'];
+    if (isset($vars['configOption18'])) $fields['configoption18'] = $vars['configOption18'];
+    if (isset($vars['configOption19'])) $fields['configoption19'] = $vars['configOption19'];
+    if (isset($vars['configOption20'])) $fields['configoption20'] = $vars['configOption20'];
+    if (isset($vars['configOption21'])) $fields['configoption21'] = $vars['configOption21'];
+    if (isset($vars['configOption22'])) $fields['configoption22'] = $vars['configOption22'];
+    if (isset($vars['configOption23'])) $fields['configoption23'] = $vars['configOption23'];
+    if (isset($vars['configOption24'])) $fields['configoption24'] = $vars['configOption24'];
 
     if (isset($vars['freeDomain'])) $fields['freedomain'] = $vars['freeDomain'];
     if (isset($vars['freeDomainPaymentTerms'])) $fields['freedomainpaymentterms'] = $vars['freeDomainPaymentTerms'];
@@ -63,16 +79,16 @@ function update_env($vars)
     if (isset($vars['tagLine'])) $fields['tagline'] = $vars['tagLine'];
     if (isset($vars['shortDescription'])) $fields['short_description'] = $vars['shortDescription'];
 
-    // update timestamp
     $fields['updated_at'] = date('Y-m-d H:i:s');
 
     return (object) $fields;
 }
 
 try {
-    $update_fields = update_env($get_defined_vars());
+    $id = (isset($vars['id']) && is_numeric($vars['id'])) ? (int)$vars['id'] : @$_REQUEST['id'];
+    $update_fields = update_env(get_defined_vars());
 
-    if (empty($update_fields->id) || !is_numeric($update_fields->id)) {
+    if (empty($id) || !is_numeric($id)) {
         $apiresults = array(
             "result" => "error",
             "message" => "Missing or invalid 'id' " .$update_fields->id." parameter"
@@ -80,25 +96,31 @@ try {
         return;
     }
 
-    if (empty($post_fields->name) || 
-        empty($post_fields->type) || 
-        empty($post_fields->description) || 
-        empty($post_fields->welcomeEmail) || 
-        empty($post_fields->payType)) {
+    if (empty($update_fields->name) || 
+        empty($update_fields->type) || 
+        empty($update_fields->description) || 
+        empty($update_fields->welcomeemail) || 
+        empty($update_fields->paytype)) {
         $apiresults = ["result" => "error", "message" => "Missing required fields (name, type, description, welcomeEmail, payType)"];
         return;
     }
 
-    $id = $update_fields->id;
-    unset($update_fields['id']);
+    if (empty($update_fields)) {
+        $apiresults = [
+            "result"  => "error",
+            "message" => "No fields to update"
+        ];
+        return;
+    }
 
     Capsule::table('tblproducts')
-        ->where('id', $id)
-        ->update((array)$update_fields);
+    ->where('id', $id)
+    ->update((array)$update_fields);
 
     $apiresults = [
         "result" => "success",
-        "updated_id" => $id
+        "updated_id" => $id,
+        "name" => $update_fields->name
     ];
 
 } catch (Exception $e) {

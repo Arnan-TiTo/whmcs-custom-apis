@@ -24,7 +24,6 @@ function get_env($vars)
 
     );
     
-    //Post CURL
     $array['type']        = $vars['type'] ?? 'general';
     $array['name']        = $vars['name'] ?? null;
     $array['subject']     = $vars['subject'] ?? null;
@@ -38,20 +37,8 @@ function get_env($vars)
     $array['plaintext']   = isset($vars['plaintext']) ? (int)$vars['plaintext'] : 0;
     $array['disabled']    = isset($vars['disabled']) ? (int)$vars['disabled'] : 0;    
 
-    if (!empty($vars['message_b64'])) {
-        $decoded = base64_decode($vars['message_b64'], true);
-        $array['message'] = ($decoded === false) ? null : $decoded;
-    } else {
-        $msg = $vars['message'] ?? null;
-        if ($msg !== null) {
-            $msg = html_entity_decode($msg, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-        }
-        $array['message'] = $msg;
-    }    
-
     return (object) $array;
 }
-
 
 try {
 
@@ -59,6 +46,15 @@ try {
 
     if (empty($post_fields->name)||empty($post_fields->subject)||empty($post_fields->message)) {
         $apiresults = array("result" => "error", "message" => "Missing required fields (name, subject, message)");
+    }
+
+    if (!empty($post_fields->message)) {
+        $msg = $post_fields->message ?? null;
+        if ($msg !== null) {
+            $msg = html_entity_decode($msg, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+            $msg = trim($msg);
+            $post_fields->message = $msg;
+        }
     }
 
     $id = Capsule::table('tblemailtemplates')->insertGetId([

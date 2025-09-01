@@ -59,7 +59,7 @@ try {
 
     $apiresults = [
         "result"     => "success",
-        "updated_id" => $id
+        "id" => $id
     ];
 
 } catch (\Throwable $e) {

@@ -20,8 +20,8 @@ function get_env($vars)
      'blind_copy'     => array(),
      'attachments'     => array(),
      'plaintext'     => array(),
-     'disabled'     => array()
-
+     'disabled'     => array(),
+     'created_at'  => array(),
     );
     
     $array['type']        = $vars['type'] ?? 'general';
@@ -35,7 +35,8 @@ function get_env($vars)
     $array['blind_copy']  = $vars['blind_copy_to'] ?? '';
     $array['attachments'] = $vars['attachments'] ?? '';
     $array['plaintext']   = isset($vars['plaintext']) ? (int)$vars['plaintext'] : 0;
-    $array['disabled']    = isset($vars['disabled']) ? (int)$vars['disabled'] : 0;    
+    $array['disabled']    = isset($vars['disabled']) ? (int)$vars['disabled'] : 0; 
+    $array['created_at']  = $vars['createdAt'] ?? date('Y-m-d H:i:s');
 
     return (object) $array;
 }

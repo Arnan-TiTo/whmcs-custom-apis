@@ -13,52 +13,56 @@ function update_env($vars)
     if (isset($vars['type'])) $fields['type'] = $vars['type'];
     if (isset($vars['currency'])) $fields['currency'] = $vars['currency'];
     if (isset($vars['relid'])) $fields['relid'] = $vars['relid'];
-    if (isset($vars['mSetupFee'])) $fields['msetupfee'] = $vars['mSetupFee'];
-    if (isset($vars['qSetupFee'])) $fields['qsetupfee'] = $vars['qSetupFee'];
-    if (isset($vars['sSetupFee'])) $fields['ssetupfee'] = $vars['sSetupFee'];
-    if (isset($vars['aSetupFee'])) $fields['asetupfee'] = $vars['aSetupFee'];
-    if (isset($vars['bSetupFee'])) $fields['bsetupfee'] = $vars['bSetupFee'];
-    if (isset($vars['tSetupFee'])) $fields['tsetupfee'] = $vars['tSetupFee'];
-    if (isset($vars['monthly'])) $fields['monthly'] = $vars['monthly'];
-    if (isset($vars['quarterly'])) $fields['quarterly'] = $vars['quarterly'];
-    if (isset($vars['semiAnnually'])) $fields['semiannually'] = $vars['semiAnnually'];
-    if (isset($vars['annually'])) $fields['annually'] = $vars['annually'];
-    if (isset($vars['biennially'])) $fields['biennially'] = $vars['biennially'];
-    if (isset($vars['triennially'])) $fields['triennially'] = $vars['triennially'];
+    $fields['msetupfee']     = isset($vars['mSetupFee'])     ? $vars['mSetupFee']     : 0;
+    $fields['qsetupfee']     = isset($vars['qSetupFee'])     ? $vars['qSetupFee']     : 0;
+    $fields['ssetupfee']     = isset($vars['sSetupFee'])     ? $vars['sSetupFee']     : 0;
+    $fields['asetupfee']     = isset($vars['aSetupFee'])     ? $vars['aSetupFee']     : 0;
+    $fields['bsetupfee']     = isset($vars['bSetupFee'])     ? $vars['bSetupFee']     : 0;
+    $fields['tsetupfee']     = isset($vars['tSetupFee'])     ? $vars['tSetupFee']     : 0;
+    $fields['monthly']       = isset($vars['monthly'])       ? $vars['monthly']       : 0;
+    $fields['quarterly']     = isset($vars['quarterly'])     ? $vars['quarterly']     : 0;
+    $fields['semiannually']  = isset($vars['semiAnnually'])  ? $vars['semiAnnually']  : 0;
+    $fields['annually']      = isset($vars['annually'])      ? $vars['annually']      : 0;
+    $fields['biennially']    = isset($vars['biennially'])    ? $vars['biennially']    : 0;
+    $fields['triennially']   = isset($vars['triennially'])   ? $vars['triennially']   : 0;
 
     return (object) $fields;
 }
 
 try {
-    $id = (isset($vars['id']) && is_numeric($vars['id'])) ? (int)$vars['id'] : @$_REQUEST['id'];
 
     $update_fields = update_env(get_defined_vars());
 
-    if (empty($id) || !is_numeric($id)) {
+    if (empty($relid) || !is_numeric($relid)|| $relid <= 0) {
         $apiresults = array(
             "result" => "error",
-            "message" => "Missing or invalid 'id' parameter"
+            "message" => "Missing or invalid 'relid' parameter"
         );
         return;
     }    
 
-    if (empty($update_fields->type) || empty($update_fields->currency) || empty($update_fields->relid)) {
-        $apiresults = ["result" => "error", "message" => "Missing required fields (type, currency, relid)"];
+    if (empty($update_fields->currency) || empty($update_fields->type)) {
+        $apiresults = ["result" => "error", "message" => "Missing required fields (type, currency)"];
         return;
     }
 
-    if (!is_numeric($update_fields->msetupfee)    || !is_numeric($update_fields->qsetupfee) ||
-        !is_numeric($update_fields->ssetupfee)    || !is_numeric($update_fields->asetupfee) ||
-        !is_numeric($update_fields->bsetupfee)    || !is_numeric($update_fields->tsetupfee) ||
-        !is_numeric($update_fields->monthly)      || !is_numeric($update_fields->quarterly) ||
-        !is_numeric($update_fields->semiannually) || !is_numeric($update_fields->annually) ||
-        !is_numeric($update_fields->biennially)   || !is_numeric($update_fields->triennially)) {
-        $apiresults = ["result" => "error", "message" => "Invalid pricing values"];
-        return;
-    }
+    // find id 
+    $query = Capsule::table('tblpricing');
 
-    if (empty($update_fields)) {
-        $apiresults = ["result" => "error", "message" => "No fields provided to update"];
+    if (!empty($update_fields->relid))
+    $query->where('relid', $update_fields->relid);   
+    
+    if (!empty($update_fields->type))
+    $query->where('type', $update_fields->type);   
+
+    $results = $query->get();
+
+    $id = $results->isNotEmpty() ? $results[0]->id : null;
+    $relid = $results->isNotEmpty() ? $results[0]->relid : null;
+    $type = $results->isNotEmpty() ? $results[0]->type : null;
+
+    if (!$id) {
+        $apiresults = ["result" => "error", "message" => "No pricing record found with the provided criteria"];
         return;
     }
 
@@ -66,9 +70,12 @@ try {
         ->where('id', $id)
         ->update((array)$update_fields);
 
+    $results = $query->get();    
+
     $apiresults = [
         "result" => "success",
-        "id" => $id
+        "id" => $id,
+        "data" => $results
     ];
 
 } catch (Exception $e) {
